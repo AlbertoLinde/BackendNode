@@ -31,8 +31,8 @@ router.post('/login', [
         body('password', "Password format incorrect.")
             .trim()
             .isLength({min: 6})],
-    login,
-    validationResultExpress
+    validationResultExpress,
+    login
 );
 
 export default router;
