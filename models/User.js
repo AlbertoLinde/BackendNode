@@ -1,9 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-const {Schema, model} = mongoose;
-
-const userSchema = new Schema({
+const userSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
@@ -25,7 +23,7 @@ userSchema.pre('save', async function (next) {
 
     try {
         const jumps = await bcrypt.genSalt(10);
-        user.password = bcrypt.hash(user.password, jumps);
+        user.password = await bcrypt.hash(user.password, jumps);
         next();
     } catch (e) {
         console.log(e);
@@ -34,4 +32,4 @@ userSchema.pre('save', async function (next) {
 });
 
 
-export const User = model('user', userSchema);
+export const User = mongoose.model('user', userSchema);
