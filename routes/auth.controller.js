@@ -1,4 +1,5 @@
 import { User } from "../models/User.js";
+import { tokenManager } from "../utils/tokenManager.js";
 
 export const register = async (req, res) => {
     const {email, password} = req.body;
@@ -24,12 +25,28 @@ export const login = async (req, res) => {
         let user = await User.findOne({email});
         if (!user)
             return res.status(403).json({error: "[ERROR] - Credentials Incorrect"});
+
         const passwordResponse = user.comparePassword(password);
         if (!passwordResponse)
             return res.status(403).json({error: "[ERROR] - Pass (Change to Credential) Incorrect"});
-        return res.json({ok: 'Login'})
+
+        const {token, expiresIn} = tokenManager(user.id);
+
+        return res.json({token, expiresIn});
     } catch (e) {
         console.log(e)
         return res.status(500).json({error: "Server error."});
     }
 }
+
+export const infoUser = async (req, res) => {
+    try {
+        // Find the element in the Database using the payload (payload contains all user ID)
+        // lean() return just a object
+        const user = await User.findById(req.uid).lean();
+        return res.json({email: user.email, uid: user.uid});
+    } catch (e) {
+        return res.status(500).json({error: "Server error."});
+    }
+}
+
