@@ -42,7 +42,7 @@ export const login = async (req, res) => {
 export const infoUser = async (req, res) => {
     try {
         // Find the element in the Database using the payload (payload contains all user ID)
-        // lean() return just a object
+        // lean() return just an object
         const user = await User.findById(req.uid).lean();
         return res.json({email: user.email, uid: user.uid});
     } catch (e) {
