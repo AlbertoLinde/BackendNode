@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import error from "jsonwebtoken/lib/JsonWebTokenError.js";
 
 export const requireToken = (req, res, next) => {
     try {
