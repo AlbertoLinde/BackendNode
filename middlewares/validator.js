@@ -1,4 +1,5 @@
 import { body, validationResult } from "express-validator";
+import axios from "axios";
 
 export const validationResultExpress = (req, res, next) => {
     const errors = validationResult(req);
@@ -8,6 +9,23 @@ export const validationResultExpress = (req, res, next) => {
     // Continue with the next middleware (execution)
     next();
 }
+
+export const bodyUrlValidator = [
+    body("longUrl", "Wrong Email Format")
+        .trim()
+        .notEmpty()
+        .custom(async value => {
+            try {
+                await axios.get(value);
+                return value;
+            } catch (e) {
+                console.log(e);
+                throw new Error("ERROR: Not found LongLink");
+            }
+        }),
+    // .exists(),
+    validationResultExpress
+];
 
 export const bodyRegisterValidator = [
     body('email', "Email format incorrect.")

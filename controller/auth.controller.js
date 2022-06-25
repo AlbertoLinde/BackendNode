@@ -9,7 +9,11 @@ export const register = async (req, res) => {
         if (user) throw {code: 11000}; // Jump directly to catch.
         user = new User({email, password});
         await user.save();
-        return res.status(201).json({ok: true});
+
+        const {token, expiresIn} = generateToken(user.id);
+        generateRefreshToken(user.id, res)
+
+        return res.status(201).json({token, expiresIn});
     } catch (e) {
         console.log(e);
         if (e.code === 11000) {
