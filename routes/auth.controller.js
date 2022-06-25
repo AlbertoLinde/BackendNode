@@ -56,26 +56,15 @@ export const infoUser = async (req, res) => {
 
 export const refreshToken = (req, res) => {
     try {
-        const refreshTokenCookie = req.cookies.refreshToken;
-
-        if (!refreshTokenCookie) throw new Error("No bearer ")
-
-        const {uid} = jwt.verify(refreshTokenCookie, process.env.JWT_REFRESH);
-        const {token, expiresIn} = generateToken(uid);
-
+        const {token, expiresIn} = generateToken(req.uid);
         return res.json({token, expiresIn});
     } catch (e) {
-        const TokenVerificationErrors = {
-            "invalid signature": "Sign of JWT is not valid",
-            "jwt expired": "JWT Expired",
-            "invalid token": "Token not valid",
-            "No Bearer": "Use the correct Bearer format",
-            "jwt malformed": "JWT Malformed"
-        };
-
-        return res
-            .status(401)
-            .send({error: TokenVerificationErrors[e.message]});
+        console.log(e);
+        return res.status(500).json({error: "Server Error"})
     }
 }
 
+export const logout = (req, res) => {
+    res.clearCooke('refreshToken');
+    res.json({ok: true});
+}
