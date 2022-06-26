@@ -1,4 +1,4 @@
-import { body, validationResult } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 import axios from "axios";
 
 export const validationResultExpress = (req, res, next) => {
@@ -9,6 +9,14 @@ export const validationResultExpress = (req, res, next) => {
     // Continue with the next middleware (execution)
     next();
 }
+
+export const paramsUrlValidator = [
+    param('id', "Format not valid")
+        .trim()
+        .notEmpty()
+        .escape(),
+    validationResultExpress
+];
 
 export const bodyUrlValidator = [
     body("longUrl", "Wrong Email Format")
