@@ -11,6 +11,22 @@ export const getUrls = async (req, res) => {
     }
 }
 
+export const getUrl = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const url = await Url.findById(id);
+
+        if (!url) return res.status(400).json({error: 'Url doesnt exist'});
+
+        // Check if the correspond to the user
+        if (url.uid.equals(req.uid)) return res.status(401).json({error: 'This urls is not yours'})
+
+        return res.json({url});
+    } catch (e) {
+        return res.status(500).json({error: 'Error'});
+    }
+}
+
 export const createUrl = async (req, res) => {
     try {
         const {longUrl} = req.body;
@@ -23,6 +39,24 @@ export const createUrl = async (req, res) => {
         const newUrl = await url.save();
 
         return res.status(201).json({newUrl});
+    } catch (e) {
+        return res.status(500).json({error: 'Error'});
+    }
+}
+
+export const removeUrl = async (req, res) => {
+    try {
+        const {id} = req.params;
+        const url = await Url.findById(id);
+
+        if (!url) return res.status(400).json({error: 'Url doesnt exist'});
+
+        // Check if the correspond to the user
+        if (url.uid.equals(req.uid)) return res.status(401).json({error: 'This urls is not yours'})
+
+        await url.remove();
+
+        return res.json({url});
     } catch (e) {
         return res.status(500).json({error: 'Error'});
     }
